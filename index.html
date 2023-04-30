@@ -91,17 +91,22 @@
         }
 
         $('#numberinput').on("input", function() {
+          this.value = removeDollarSign(this.value);
+
           var number = Number(this.value);
           $('#number10').val(parseFloat((number * 1.10).toFixed(2)));
           $('#number15').val(parseFloat((number * 1.15).toFixed(2)));
           $('#number20').val(parseFloat((number * 1.20).toFixed(2)));
 
         });
-        
       });
 
       function copy(fieldName) {
         navigator.clipboard.writeText($('#' + fieldName).val());
+      }
+
+      function removeDollarSign(input) {
+        return input.replace("$", "");
       }
 
     </script>
