@@ -114,7 +114,7 @@
       matrix.push({min:500.01, max:1000, gross:20, markup:25});
       matrix.push({min:1000.01, max:5000, gross:17, markup:20});
       matrix.push({min:5000.01, max:100000, gross:13, markup:15});
-      
+
       $( document ).ready(function() {
         $('#textinput').on("input", function() {
             var text = this.value;
@@ -126,15 +126,19 @@
         });
 
         $('#costinput').on("input", function() {
-            var cost = this.value;
-            var priceObject = getPartsPrice(cost);
+            this.value = removeDollarSign(this.value);
+
+            if(this.value <= 0) {
+              return;
+            }
+
+            var priceObject = getPartsPrice(this.value);
+            console.log(priceObject);
 
             $('#price').val(priceObject.price);
             $('#markup').val(priceObject.markupPc);
-            $('#gross').val((priceObject.price - cost).toFixed(2));
+            $('#gross').val((priceObject.price - this.value).toFixed(2));
             $('#grosspc').val(priceObject.grossProfitPc);
-
-            
         });
 
         function titleCase(str) {
@@ -162,8 +166,8 @@
       }
 
       function removeDollarSign(input) {
-        if(typeof input === 'string' && input.includes("$")) {
-          return input.replace("$", "");
+        if(typeof input === 'string') {
+          return input.replace(/[^\d.-]/g, '');
         }
         return input;
       }
@@ -171,7 +175,6 @@
       function getPartsPrice(cost) {
 
         cost = removeDollarSign(cost);
-        cost = Number(cost);
 
         var grossProfitPc = 0;
         var markupPc = 0;
@@ -179,14 +182,11 @@
         var priceObject = getMatrixEntry(cost);
         var price = Number((cost * (100 + priceObject.markup) / 100).toFixed(2));
 
-        console.log(price);
+        // console.log(price);
         return {price:price, grossProfitPc:priceObject.gross, markupPc:priceObject.markup};
       }
 
       function getMatrixEntry(cost) {
-
-        // console.log(matrix);
-
         for(var i = 0; i < matrix.length; i++) {
           if(cost >= matrix[i].min && cost <= matrix[i].max) {
             // console.log(matrix[i]);
