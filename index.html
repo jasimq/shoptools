@@ -15,27 +15,38 @@
   <body>
     <div class="container">
       <h1>Shop Tools</h1>
+
       <div class="container col-md-6">
         
-          <label class="m-2" for="exampleInputEmail1">Text Sizer</label>
+          <label class="m-2" for="exampleInputEmail1">Parts Price Matrix</label>
           <div class="input-group">
-            <input type="search" class="form-control" id="textinput" placeholder="Enter plain text">
-            <button onclick="copy('textinput')" class="btn btn-sm btn-success copy-button">Copy</button> 
+            <input type="search" class="form-control" id="costinput" placeholder="Enter Cost">
+            <button onclick="copy('costinput')" class="btn btn-sm btn-success copy-button">Copy</button> 
           </div>
 
           <div class="input-group form-floating">
-            <input type="text" class="form-control" id="textuppercase" placeholder="Uppercase" disabled>
-            <label for="textuppercase">Uppercase</label>
-            <button onclick="copy('textuppercase')" class="btn btn-sm btn-success copy-button">Copy</button> 
+            <input type="text" class="form-control" id="price" placeholder="Price" disabled>
+            <label for="price">Price</label>
+            <button onclick="copy('price')" class="btn btn-sm btn-success copy-button">Copy</button> 
           </div>
 
           <div class="input-group form-floating">
-            <input type="text" class="form-control" id="texttitlecase" placeholder="Title Case" disabled>
-            <label for="texttitlecase">Title Case</label>
-            <button onclick="copy('texttitlecase')" class="btn btn-sm btn-success copy-button">Copy</button> 
+            <input type="text" class="form-control" id="markup" placeholder="Markup %" disabled>
+            <label for="markup">Markup %</label>
           </div>
-          
+
+          <div class="input-group form-floating">
+            <input type="text" class="form-control" id="gross" placeholder="Gross Profit $" disabled>
+            <label for="gross">Gross Profit $</label>
+          </div>
+
+          <div class="input-group form-floating">
+            <input type="text" class="form-control" id="grosspc" placeholder="Gross Profit %" disabled>
+            <label for="gross">Gross Profit %</label>
+          </div>
+
       </div>
+      
       <hr/>
       <div class="container col-md-6">
         
@@ -64,6 +75,28 @@
           </div>
           
       </div>
+      <hr/>
+      <div class="container col-md-6">
+        
+          <label class="m-2" for="exampleInputEmail1">Text Sizer</label>
+          <div class="input-group">
+            <input type="search" class="form-control" id="textinput" placeholder="Enter plain text">
+            <button onclick="copy('textinput')" class="btn btn-sm btn-success copy-button">Copy</button> 
+          </div>
+
+          <div class="input-group form-floating">
+            <input type="text" class="form-control" id="textuppercase" placeholder="Uppercase" disabled>
+            <label for="textuppercase">Uppercase</label>
+            <button onclick="copy('textuppercase')" class="btn btn-sm btn-success copy-button">Copy</button> 
+          </div>
+
+          <div class="input-group form-floating">
+            <input type="text" class="form-control" id="texttitlecase" placeholder="Title Case" disabled>
+            <label for="texttitlecase">Title Case</label>
+            <button onclick="copy('texttitlecase')" class="btn btn-sm btn-success copy-button">Copy</button> 
+          </div>
+          
+      </div>
     </div>
 
     <!-- Option 1: Bootstrap Bundle with Popper -->
@@ -71,6 +104,17 @@
 
 
     <script type="text/javascript">
+      var matrix = [];
+      matrix.push({min:0.01, max:1, gross:50, markup:100});
+      matrix.push({min:1.01, max:10, gross:43, markup:75});
+      matrix.push({min:10.01, max:25, gross:33, markup:50});
+      matrix.push({min:25.01, max:150, gross:31, markup:45});
+      matrix.push({min:150.01, max:300, gross:29, markup:40});
+      matrix.push({min:300.01, max:500, gross:23, markup:30});
+      matrix.push({min:500.01, max:1000, gross:20, markup:25});
+      matrix.push({min:1000.01, max:5000, gross:17, markup:20});
+      matrix.push({min:5000.01, max:100000, gross:13, markup:15});
+      
       $( document ).ready(function() {
         $('#textinput').on("input", function() {
             var text = this.value;
@@ -78,6 +122,18 @@
 
             $('#textuppercase').val(text.toUpperCase());
             $('#texttitlecase').val(titleCase(text));
+            
+        });
+
+        $('#costinput').on("input", function() {
+            var cost = this.value;
+            var priceObject = getPartsPrice(cost);
+
+            $('#price').val(priceObject.price);
+            $('#markup').val(priceObject.markupPc);
+            $('#gross').val((priceObject.price - cost).toFixed(2));
+            $('#grosspc').val(priceObject.grossProfitPc);
+
             
         });
 
@@ -106,7 +162,38 @@
       }
 
       function removeDollarSign(input) {
-        return input.replace("$", "");
+        if(typeof input === 'string' && input.includes("$")) {
+          return input.replace("$", "");
+        }
+        return input;
+      }
+
+      function getPartsPrice(cost) {
+
+        cost = removeDollarSign(cost);
+        cost = Number(cost);
+
+        var grossProfitPc = 0;
+        var markupPc = 0;
+
+        var priceObject = getMatrixEntry(cost);
+        var price = Number((cost * (100 + priceObject.markup) / 100).toFixed(2));
+
+        console.log(price);
+        return {price:price, grossProfitPc:priceObject.gross, markupPc:priceObject.markup};
+      }
+
+      function getMatrixEntry(cost) {
+
+        // console.log(matrix);
+
+        for(var i = 0; i < matrix.length; i++) {
+          if(cost >= matrix[i].min && cost <= matrix[i].max) {
+            // console.log(matrix[i]);
+            return matrix[i];
+          }
+        }
+        return null;
       }
 
     </script>
