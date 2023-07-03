@@ -105,15 +105,27 @@
 
     <script type="text/javascript">
       var matrix = [];
+      // matrix.push({min:0.01, max:1, gross:50, markup:100});
+      // matrix.push({min:1.01, max:10, gross:43, markup:75});
+      // matrix.push({min:10.01, max:25, gross:33, markup:50});
+      // matrix.push({min:25.01, max:150, gross:31, markup:45});
+      // matrix.push({min:150.01, max:300, gross:29, markup:40});
+      // matrix.push({min:300.01, max:500, gross:23, markup:30});
+      // matrix.push({min:500.01, max:1000, gross:20, markup:25});
+      // matrix.push({min:1000.01, max:5000, gross:17, markup:20});
+      // matrix.push({min:5000.01, max:100000, gross:13, markup:15});
+
       matrix.push({min:0.01, max:1, gross:50, markup:100});
-      matrix.push({min:1.01, max:10, gross:43, markup:75});
-      matrix.push({min:10.01, max:25, gross:33, markup:50});
-      matrix.push({min:25.01, max:150, gross:31, markup:45});
-      matrix.push({min:150.01, max:300, gross:29, markup:40});
-      matrix.push({min:300.01, max:500, gross:23, markup:30});
-      matrix.push({min:500.01, max:1000, gross:20, markup:25});
-      matrix.push({min:1000.01, max:5000, gross:17, markup:20});
+      matrix.push({min:1.01, max:10, gross:50, markup:100});
+      matrix.push({min:10.01, max:25, gross:43, markup:75});
+      matrix.push({min:25.01, max:150, gross:35, markup:55});
+      matrix.push({min:150.01, max:300, gross:33, markup:50});
+      matrix.push({min:300.01, max:500, gross:26, markup:35});
+      matrix.push({min:500.01, max:1000, gross:21, markup:27});
+      matrix.push({min:1000.01, max:5000, gross:18, markup:23});
       matrix.push({min:5000.01, max:100000, gross:13, markup:15});
+
+      //((25*1.5)-25)/(25*1.5)
 
       $( document ).ready(function() {
         $('#textinput').on("input", function() {
