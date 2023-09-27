@@ -22,60 +22,32 @@
           <div class="input-group">
             <input type="search" class="form-control" id="costinput" placeholder="Enter Cost">
             <button onclick="copy('costinput')" class="btn btn-sm btn-success copy-button">Copy</button> 
+            <button onclick="addToTable('costinput')" class="btn btn-sm btn-success copy-button">Add</button> 
           </div>
 
-          <div class="input-group form-floating">
+          <div class="input-group form-floating" data-toggle="tooltip" data-placement="top" title="">
             <input type="text" class="form-control" id="price" placeholder="Price" disabled>
             <label for="price">Price</label>
             <button onclick="copy('price')" class="btn btn-sm btn-success copy-button">Copy</button> 
+            <button onclick="addToTable('price')" class="btn btn-sm btn-success copy-button">Add</button> 
           </div>
 
-          <div class="input-group form-floating">
-            <input type="text" class="form-control" id="markup" placeholder="Markup %" disabled>
-            <label for="markup">Markup %</label>
-          </div>
+          <div id="totalBox" class="">
+            <hr/>
+            <div class="input-group form-floating">
+              <input type="text" class="form-control" id="total" placeholder="Total">
+              <label for="total">Total</label>
+              <button onclick="copy('total')" class="btn btn-sm btn-success copy-button">Copy</button> 
+            </div>
 
-          <div class="input-group form-floating">
-            <input type="text" class="form-control" id="gross" placeholder="Gross Profit $" disabled>
-            <label for="gross">Gross Profit $</label>
-          </div>
-
-          <div class="input-group form-floating">
-            <input type="text" class="form-control" id="grosspc" placeholder="Gross Profit %" disabled>
-            <label for="gross">Gross Profit %</label>
+            <div id="totalArrBox" class="">
+            </div>    
           </div>
 
       </div>
+      <hr/>
       
-      <hr/>
-      <div class="container col-md-6">
-        
-          <label class="m-2" for="exampleInputEmail1">+Percentage</label>
-          <div class="input-group">
-            <input type="search" class="form-control" id="numberinput" placeholder="Enter number">
-            <button onclick="copy('numberinput')" class="btn btn-sm btn-success copy-button">Copy</button> 
-          </div>
 
-          <div class="input-group form-floating">
-            <input type="text" class="form-control" id="number10" placeholder="+10%" disabled>
-            <label for="number10">+10%</label>
-            <button onclick="copy('number10')" class="btn btn-sm btn-success copy-button">Copy</button> 
-          </div>
-
-          <div class="input-group form-floating">
-            <input type="text" class="form-control" id="number15" placeholder="+15%" disabled>
-            <label for="number15">+15%</label>
-            <button onclick="copy('number15')" class="btn btn-sm btn-success copy-button">Copy</button> 
-          </div>
-
-          <div class="input-group form-floating">
-            <input type="text" class="form-control" id="number20" placeholder="+20%" disabled>
-            <label for="number20">+20%</label>
-            <button onclick="copy('number20')" class="btn btn-sm btn-success copy-button">Copy</button> 
-          </div>
-          
-      </div>
-      <hr/>
       <div class="container col-md-6">
         
           <label class="m-2" for="exampleInputEmail1">Text Sizer</label>
@@ -128,6 +100,9 @@
       //((25*1.5)-25)/(25*1.5)
 
       $( document ).ready(function() {
+
+        $('[data-toggle="tooltip"]').tooltip()
+
         $('#textinput').on("input", function() {
             var text = this.value;
             // console.log(text);
@@ -148,9 +123,18 @@
             console.log(priceObject);
 
             $('#price').val(priceObject.price);
-            $('#markup').val(priceObject.markupPc);
-            $('#gross').val((priceObject.price - this.value).toFixed(2));
-            $('#grosspc').val(priceObject.grossProfitPc);
+            
+            var tooltipStr = "Markup: " + priceObject.markupPc + "% | Gross Profit: $" + (priceObject.price - this.value).toFixed(2) + " | Gross Profit: " + priceObject.grossProfitPc + "%";
+            $('#price').parent().attr('data-bs-original-title', tooltipStr)
+            
+            // $('#markup').val(priceObject.markupPc);
+            // $('#gross').val((priceObject.price - this.value).toFixed(2));
+            // $('#grosspc').val(priceObject.grossProfitPc);
+
+            var number = Number(this.value);
+            $('#number10').val(parseFloat((number * 1.10).toFixed(2)));
+            $('#number15').val(parseFloat((number * 1.15).toFixed(2)));
+            $('#number20').val(parseFloat((number * 1.20).toFixed(2)));
         });
 
         function titleCase(str) {
@@ -162,19 +146,47 @@
            return splitStr.join(' '); 
         }
 
-        $('#numberinput').on("input", function() {
-          this.value = removeDollarSign(this.value);
+        // $('#numberinput').on("input", function() {
+        //   this.value = removeDollarSign(this.value);
 
-          var number = Number(this.value);
-          $('#number10').val(parseFloat((number * 1.10).toFixed(2)));
-          $('#number15').val(parseFloat((number * 1.15).toFixed(2)));
-          $('#number20').val(parseFloat((number * 1.20).toFixed(2)));
+        //   var number = Number(this.value);
+        //   $('#number10').val(parseFloat((number * 1.10).toFixed(2)));
+        //   $('#number15').val(parseFloat((number * 1.15).toFixed(2)));
+        //   $('#number20').val(parseFloat((number * 1.20).toFixed(2)));
 
-        });
+        // });
       });
 
       function copy(fieldName) {
         navigator.clipboard.writeText($('#' + fieldName).val());
+      }
+
+      var totalArr = [];
+      function addToTable(fieldName) {
+        var value = removeDollarSign($('#' + fieldName).val());
+
+        if(value == '') {
+          return;
+        }
+
+        totalArr.push(value);
+
+        renderTotalBox();
+      }
+
+      function renderTotalBox() {
+        var total  = 0.0;
+
+        $('#totalArrBox').html('');
+
+        for (var i = 0; i < totalArr.length; i++) {
+          var n = Number(totalArr[i]);
+          total += n
+
+          $('#totalArrBox').append('<input type="search" class="form-control" id="total-row-' + i + '"value="' + n + '"></div>')
+        }
+
+        $('#total').val(total);
       }
 
       function removeDollarSign(input) {
